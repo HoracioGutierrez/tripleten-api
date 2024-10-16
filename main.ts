@@ -4,6 +4,7 @@ import cardRouter from "./routes/cardRoutes.ts";
 import { notFoundRoute } from "./routes/notFoundRoute.ts";
 import authRouter from "./routes/authRoutes.ts";
 import { API_AUTH_ROUTE, API_CARDS_ROUTE, API_USERS_ROUTE } from "./utils/constants.ts";
+import landingController from "./controllers/landingController.ts";
 
 const serverConfig = {
   port: 3000,
@@ -13,25 +14,7 @@ const app = new Application();
 const router = new Router();
 
 //Home Route
-router.get("/", (ctx) => {
-  ctx.response.type = "text/html";
-  ctx.response.body = `
-    <h1>Tripleten REST API</h1>
-    <p>This is a REST API for Tripleten Web Development Course. You can use the following endpoints:</p>
-    <ul>
-      <li>
-        <span>GET - </span>
-        <a href="/api/users">/api/users</a>
-        <span> - Get all users</span>
-      </li>
-      <li>
-        <span>GET - </span>
-        <a href="/api/users/1">/api/users/:id</a>
-        <span> - Get user with a specific id</span>
-      </li>
-    </ul>
-  `;
-});
+router.get("/", landingController);
 
 //User Routes
 router.use(API_USERS_ROUTE, userRouter.routes());

@@ -1,43 +1,64 @@
 import type { Context } from "https://deno.land/x/oak@v17.1.0/mod.ts";
-import type { SignUpRequestBody } from "../../utils/types/types.ts";
 import * as bcrypt from "https://deno.land/x/bcrypt@v0.3.0/mod.ts";
+
 import validator from "npm:validator"
-import { badRequest } from "../../utils/lib.ts";
+
+import type { NewDBUser, SignUpRequestBody } from "../../utils/types/types.ts";
+import { badRequest, serverError } from "../../utils/lib.ts";
+
 
 const signUpController = async (ctx: Context) => {
   let requestBody: SignUpRequestBody;
 
-  // Validate request body as JSON format
   try {
     requestBody = await ctx.request.body.json();
   } catch (_err) {
-    badRequest({ context: ctx, message: "Invalid request body. Malformed JSON" });
-    return;
+    return badRequest({ context: ctx, message: "Invalid request body. Malformed JSON" });
   }
 
-  // Validate request body email and password 
   if (!requestBody.email || !requestBody.password) {
-    badRequest({ context: ctx, message: "Invalid request body, email and password are required" });
-    return;
+    return badRequest({ context: ctx, message: "Invalid request body, email and password are required" });
   }
 
-  // Validate email format 
   if (!validator.isEmail(requestBody.email)) {
-    badRequest({ context: ctx, message: "Invalid email format" });
-    return;
+    return badRequest({ context: ctx, message: "Invalid email format" });
   }
 
-  // Validate password length
   if (!validator.isLength(requestBody.password, { min: 6, max: 30 })) {
-    badRequest({ context: ctx, message: "Password must be between 6 and 30 characters" });
-    return;
+    return badRequest({ context: ctx, message: "Password must be between 6 and 30 characters" });
   }
 
-  // Hash password
-  const generatedSalt = await bcrypt.genSalt();
-  const hashedPassword = await bcrypt.hash(requestBody.password, generatedSalt);
+  try {
 
-  ctx.response.body = hashedPassword;
+    const db = await Deno.openKv("https://api.deno.com/databases/d506fcca-3eee-4678-9b7f-d51059fac625/connect");
+
+
+    const userExists = await db.get(["users", requestBody.email])
+
+    if (userExists.value) {
+      return serverError({ context: ctx, message: "User already exists" });
+    }
+
+    const generatedSalt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(requestBody.password, generatedSalt);
+
+    const newUser: NewDBUser = {
+      email: requestBody.email,
+      password: hashedPassword,
+      id: crypto.randomUUID()
+    }
+
+    await db.set(["users", requestBody.email], newUser);
+
+    ctx.response.status = 201;
+    ctx.response.body = newUser;
+  } catch (err) {
+    if (err instanceof Error) {
+      return serverError({ context: ctx, message: err.message });
+    } else {
+      return serverError({ context: ctx, message: "Unknown error occurred while creating user. Please try again later" });
+    }
+  }
 }
 
 export default signUpController;

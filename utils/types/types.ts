@@ -1,6 +1,6 @@
 import type { Context } from "https://deno.land/x/oak@v17.1.0/mod.ts";
 
-interface User {
+export interface User {
   email: string;
   password: string;
 }
@@ -18,4 +18,8 @@ export type FormatResponseParams = {
 export type BadRequestParams = {
   context: Context;
   message: string;
+}
+
+export type NewDBUser = User & {
+  id: string;
 }

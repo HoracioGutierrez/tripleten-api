@@ -23,3 +23,11 @@ export const badRequest = ({ context, message }: BadRequestParams) => {
     status: 400
   });
 }
+
+export const serverError = ({ context, message }: BadRequestParams) => {
+  return formatResponse({
+    context,
+    message,
+    status: 500
+  });
+}
