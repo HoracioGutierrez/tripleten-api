@@ -1,4 +1,4 @@
-import { Application, Router } from "https://deno.land/x/oak/mod.ts";
+import { Application, Router } from "https://deno.land/x/oak@v17.1.0/mod.ts";
 import userRouter from "./routes/userRoutes.ts";
 import cardRouter from "./routes/cardRoutes.ts";
 import { notFoundRoute } from "./routes/notFoundRoute.ts";
