@@ -16,6 +16,16 @@ const landingController = (ctx: Context) => {
         <a href="/api/users/1">/api/users/:id</a>
         <span> - Get user with a specific id</span>
       </li>
+      <li>
+        <span>POST - </span>
+        <a href="/api/auth/signin">/api/auth/signin</a>
+        <span> - Login user</span>
+      </li>
+      <li>
+        <span>POST - </span>
+        <a href="/api/auth/signup">/api/auth/signup</a>
+        <span> - Signup user</span>
+      </li>
     </ul>
   `;
 }
