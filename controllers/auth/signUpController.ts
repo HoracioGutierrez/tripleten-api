@@ -32,7 +32,6 @@ const signUpController = async (ctx: Context) => {
 
     const db = await Deno.openKv("https://api.deno.com/databases/d506fcca-3eee-4678-9b7f-d51059fac625/connect");
 
-
     const userExists = await db.get(["users", requestBody.email])
 
     if (userExists.value) {
@@ -45,7 +44,8 @@ const signUpController = async (ctx: Context) => {
     const newUser: NewDBUser = {
       email: requestBody.email,
       password: hashedPassword,
-      id: crypto.randomUUID()
+      id: crypto.randomUUID(),
+      name : requestBody.name || "Jaques Cousteau"
     }
 
     await db.set(["users", requestBody.email], newUser);

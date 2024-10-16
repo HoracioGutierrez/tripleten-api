@@ -5,7 +5,7 @@ import { SIGNIN_ROUTE, SIGNUP_ROUTE } from "../utils/constants.ts";
 
 const authRouter = new Router();
 
-authRouter.get(SIGNIN_ROUTE, loginController);
+authRouter.post(SIGNIN_ROUTE, loginController);
 
 authRouter.post(SIGNUP_ROUTE, signUpController);
 
